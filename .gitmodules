@@ -1,0 +1,3 @@
+[submodule "AquaSPICE-DataQA"]
+	path = AquaSPICE-DataQA
+	url = https://github.com/Applied-Artificial-Intelligence-Eurecat/AquaSPICE-DataQA

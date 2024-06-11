@@ -23,7 +23,9 @@ A Context Broker component is the core and mandatory component of any “Powered
 NGINX is open-source web server software used for reverse proxy, load balancing, and caching. It provides HTTPS server capabilities and is mainly designed for maximum performance and stability. It also functions as a proxy server for email communications protocols, such as IMAP, POP3, and SMTP. In this build its used a reverse proxy to provide HTTPS with the help of Certbot.
 
 # Configuration
-Change in files rtm.conf, grafana.conf, all the data-qa/config and src files, and .env the {domain_name} value for the selected domain of the platform.
+Change in files rtm.conf, grafana.conf and .env the {domain_name} value for the selected domain of the platform.
+
+For the AquaSPICE-DataQA module configuration visit its github [repository](https://github.com/Applied-Artificial-Intelligence-Eurecat/AquaSPICE-DataQA)
 
 Also, make all the D3.5 guide changes so that all the components are correctly configured.
 
@@ -33,6 +35,11 @@ Also, make all the D3.5 guide changes so that all the components are correctly c
 In the .env file, there are two types of volumes: data volumes, which are by default configured at media/aqua/... and can be modified anywhere the admin wants to store the data, and the config volumes, which are mapped at ./confs/... and point to specific configuration. If these need to be changed, please move the corresponding configuration files as well; otherwise, the containers won't fetch the configuration correctly.
 
 ## Usage
+Download the data-qa submodule:
+```
+git submodule update --init --recursive
+```
+
 Build the images:
 ```
 docker-compose build

@@ -2,7 +2,7 @@ version: "3.5"
 services:
   antwerp-data-qa:
     build:
-      context: ./data-qa/
+      context: ./AquaSPICE-DataQA/data-qa
       dockerfile: ./Dockerfile
     networks:
       - ${PROXY_NET_NAME:?err}
