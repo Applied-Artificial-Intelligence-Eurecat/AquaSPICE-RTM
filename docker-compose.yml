@@ -1,0 +1,190 @@
+version: "3.5"
+services:
+  antwerp-data-qa:
+    build:
+      context: ./data-qa/
+      dockerfile: ./Dockerfile
+    networks:
+      - ${PROXY_NET_NAME:?err}
+      - default
+      
+  antwerp-orion:
+    image: fiware/orion-ld:latest
+    container_name: ${CONTAINER_PREFIX:?err}-orion
+    hostname: ${CONTAINER_PREFIX:?err}-orion
+    ports:
+      - "1026"
+    depends_on:
+      - ${CONTAINER_PREFIX:?err}-mongo-db
+    command: -dbhost ${LOCATION_NAME:?err}-mongo-db -logLevel DEBUG -ctxTimeout 10000 -httpTimeout 10000
+    healthcheck:
+      test: curl --fail -s http://${LOCATION_NAME:?err}-orion:1026/version || exit 1
+    networks:
+      - ${PROXY_NET_NAME:?err}
+      - default
+    restart: always  
+           
+  antwerp-mongo-db:
+    image: mongo:3.6
+    container_name: ${CONTAINER_PREFIX:?err}-mongo-db
+    hostname: ${CONTAINER_PREFIX:?err}-mongo-db
+    ports:
+      - "27017"
+    command: --bind_ip_all --smallfiles
+    volumes:
+      - ${MONGODATA_VOLUME_NAME:?err}:/data
+    networks:
+      - default
+    restart: always  
+    
+  antwerp-timescale:
+    image: timescale/timescaledb-postgis:latest-pg12
+    container_name: ${CONTAINER_PREFIX:?err}-timescale
+    hostname: ${CONTAINER_PREFIX:?err}-timescale
+    ports:
+      - "8432:5432"
+    environment:
+      - POSTGRES_PASSWORD=${TIMESCALE_PWD:?err}
+      - POSTGRES_USER=${TIMESCALE_USER:?err}
+      - POSTGRES_DB=${TIMESCALE_DB:?err}  
+    volumes:
+      - ${TIMESCALE_VOLUME_NAME:?err}:/var/lib/postgresql/data
+    networks:
+      - default
+    restart: always  
+          
+  antwerp-quantumleap:
+    container_name: ${CONTAINER_PREFIX:?err}-quantumleap
+    hostname: ${CONTAINER_PREFIX:?err}-quantumleap
+    image: orchestracities/quantumleap:edge
+    ports:
+      - "8668"
+    environment:      
+      - POSTGRES_HOST=${LOCATION_NAME:?err}-timescale
+      - POSTGRES_PORT=${QUANTUMLEAP_PORT:?err} 
+      - POSTGRES_DB_NAME=${QUANTUMLEAP_DB_NAME:?err}  
+      - POSTGRES_DB_USER=${QUANTUMLEAP_DB_USER:?err}       
+      - LOGLEVEL=${QUANTUMLEAP_LOGLEVEL:?err} 
+      - CACHE_QUERIES=${QUANTUMLEAP_CACHE_QUERIES:?err} 
+      - POSTGRES_DB_PASS=${TIMESCALE_PWD:?err} 
+      - QL_DEFAULT_DB=${QUANTUMLEAP_DEFAULT_DB:?err} 
+      - KEEP_RAW_ENTITY=${QUANTUMLEAP_KEEP_RAW_ENTITY:?err} 
+    depends_on:
+      - ${CONTAINER_PREFIX:?err}-timescale
+    restart: always 
+    networks:
+      - ${PROXY_NET_NAME:?err}
+      - default
+      
+  antwerp-grafana:
+    container_name: ${CONTAINER_PREFIX:?err}-grafana
+    hostname: ${CONTAINER_PREFIX:?err}-grafana
+    image: grafana/grafana
+    ports:
+      - "3000"
+    depends_on:
+      - ${CONTAINER_PREFIX:?err}-timescale
+    volumes:
+        - ${GRAFANA_CONFIG_VOLUME_NAME:?err}:/etc/grafana/grafana.ini
+        - ${GRAFANA_VOLUME_NAME:?err}:/var/lib/grafana
+    restart: always    
+    networks:
+      - ${PROXY_NET_NAME:?err}
+      - default
+      
+  antwerp-keyrock:
+    image: fiware/idm:7.6.0
+    container_name: ${CONTAINER_PREFIX:?err}-${LOCATION_NAME:?err}-keyrock
+    hostname: ${CONTAINER_PREFIX:?err}-keyrock
+    ports:
+      - "3000:3000"
+    networks:
+      keyrock_db:
+        ipv4_address: 172.50.1.5
+      default:
+      proxy-network:
+    depends_on:
+      - ${CONTAINER_PREFIX:?err}-mysql-db
+    environment:
+      - DEBUG=${KEYROCK_DEBUG:?err}
+      - IDM_DEBUG=${KEYROCK_ACTIVE_DEBUG:?err}
+      - IDM_PORT=${KEYROCK_DEBUG_PORT:?err}
+      - IDM_HOST=${KEYROCK_DEBUG_HOST:?err}
+      - IDM_DB_HOST=${LOCATION_NAME:?err}-mysql-db
+      - IDM_DB_PASS=${KEYROCK_DEBUG_DB_PASS:?err}
+      - IDM_DB_USER=${KEYROCK_DEBUG_DB_USER:?err}      
+      - IDM_ADMIN_USER=${KEYROCK_DEBUG_ADMIN_USER:?err}
+      - IDM_ADMIN_EMAIL=${KEYROCK_DEBUG_ADMIN_EMAIL:?err}
+      - IDM_ADMIN_PASS=${KEYROCK_DEBUG_ADMIN_PASS:?err}
+    restart: always 
+
+  antwerp-mysql-db:
+    restart: always
+    networks:
+      keyrock_db:
+        ipv4_address: 172.50.1.6
+    image: mysql:5.7
+    container_name: ${CONTAINER_PREFIX:?err}-db-mysql
+    hostname: ${CONTAINER_PREFIX:?err}-db-mysql
+    ports:
+      - '3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?err}
+      - MYSQL_ROOT_HOST=${MYSQL_ROOT_HOST:?err}
+    volumes:
+      - ${MYSQL_VOLUME_NAME:?err}:/var/lib/mysql
+
+  antwerp-wilma:
+    image: fiware/pep-proxy
+    restart: always    
+    hostname: ${CONTAINER_PREFIX:?err}-wilma
+    container_name: ${CONTAINER_PREFIX:?err}-wilma
+
+    volumes:
+        - ${WILMA_CONFIG_VOLUME_NAME:?err}:/opt/fiware-pep-proxy/config.js 
+    environment:
+        - DEBUG=${WILMA_DEBUG:?err}    
+    networks:
+        - ${PROXY_NET_NAME:?err}
+        - ${KEYROCK_NET_NAME:?err}
+        - default
+
+volumes:
+  mongodata:
+    driver: local
+    name: ${MONGODATA_VOLUME_NAME:?err}
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './volumes/${LOCATION_NAME:?err}/mongodata'
+  timescaledata:
+    driver: local
+    name: ${TIMESCALE_VOLUME_NAME:?err}
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './volumes/${LOCATION_NAME:?err}/timescaledata'
+  grafanadata:
+    driver: local
+    name: ${GRAFANA_VOLUME_NAME:?err}
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './volumes/${LOCATION_NAME:?err}/grafanadata'
+  mysql-db:
+    driver: local
+    name: ${MYSQL_VOLUME_NAME:?err}
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './volumes/${LOCATION_NAME:?err}/mysql-db'
+
+networks:
+  proxy-network:
+    name: ${PROXY_NET_NAME:?err}
+    external: true
+  keyrock_db:
+    name: ${KEYROCK_NET_NAME:?err}
+    ipam:
+      config:
+        - subnet: 172.50.1.0/24

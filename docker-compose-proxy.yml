@@ -1,0 +1,26 @@
+version: "3.5"
+services:
+    proxy:
+        image: staticfloat/nginx-certbot
+        container_name: ${CONTAINER_PREFIX:?err}-proxy
+        ports:
+            - "80:80"
+            - "1337:1337"
+            - "443:443"
+        volumes:
+            - ${MODELS_LOCATION:?err}
+            - ${LOG_LOCATION:?err}
+            - ${LETSENCRYPT_LOCATION:?err}
+            - ${CONF_D_LOCATION:?err}
+            - ${NGINX_CONF_LOCATION:?err}
+        restart: always
+        environment:
+          - CERTBOT_EMAIL=${CERTBOT_EMAIL:?err}
+        networks:
+            - ${PROXY_NET_NAME:?err}
+            - default
+networks:
+    proxy-network:
+        name: ${PROXY_NET_NAME:?err}
+        external: true
+ 

@@ -1,0 +1,16 @@
+{
+    "rtm_platform_public_url": "https://{domain_name}",
+    "rtm_platform_services_urls": {
+        "quantumleap": "http://antwerp-quantumleap:8668",
+        "historical": "https://{domain_name}/historical",
+        "broker": "https://{domain_name}/broker",
+        "secure": "https://{domain_name}/secure"
+    },
+    "external": true,
+    "callback_url": "http://antwerp-dataqa:5000/",
+    "flask_debug": true,
+    "app_id": "867873e1-4d2c-4131-8c53-a49b25689ab8",
+    "app_secret": "b9078d94-ba8b-462c-8836-38951d50c92b",
+    "iot_user": "iot_sensor_175a220e-062d-4b20-ba1d-b95b54dc865d",
+    "iot_pwd": "iot_sensor_c890a749-287e-4a22-9bb8-f048ebda4fff"
+}

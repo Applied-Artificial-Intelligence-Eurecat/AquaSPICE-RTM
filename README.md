@@ -1,106 +1,62 @@
-**USE [GUIDELINES](GUIDELINES.md) to use the template following the steps.**
+# AquaSPICE
 
-# Name of the Project
+The aim of AquaSPICE (Advancing Sustainability of Process Industries through Digital and Circular Water Use Innovations) is the adoption of circular water use practices in the industrial sector, the integration, and the demonstration of innovative solutions concerning the process, the resource-efficiency, and the digital tools. It aims at materializing circular water use in European Process Industries, fostering awareness in resource-efficiency and delivering compact solutions for industrial applications.
 
-Populate this *README* file with the following sections.  
+## RTM platform
 
-Update the badge [![Unit tests](https://github.com/Applied-Artificial-Intelligence-Eurecat/markov-chain-example/actions/workflows/test.yaml/badge.svg)](https://github.com/Applied-Artificial-Intelligence-Eurecat/markov-chain-example/actions/workflows/test.yaml)
+The RTM platform focuses on real-time monitoring and operational modelling. It is integrated within the AquaSPICE ecosystem and it is based on the [FIWARE initiative](https://www.fiware.org/).
 
-- Provide a descriptive project name that makes others easily understand what the project is about.
-- Include in this section a one-sentence description.
-- Include bellow a detailed description of what the project does.
+To guarantee that data ingested by the RTM platform is valid and can be confidently used by end users through dashboards, as well as by intelligent services to reason over it, the context broker [Orion](https://github.com/FIWARE/context.Orion-LD) has in its core the Data Quality Assurance module (DataQA). This module evaluates the input data (coming from on-site sensors) in real time and produces transformed time series with quality metrics associated to the original readings (e.g., flag invalid readings). This evaluation is implemented using a bag of algorithms and techniques offered by the DataQA module including feature engineering and outliers’ detection and correction.
 
+## Fiware
 
-# Dependencies, Installation, and Usage
+FIWARE Foundation drives the definition – and the Open Source implementation – of key open standards that enable the development of portable and interoperable smart solutions in a faster, easier and affordable way, avoiding vendor lock-in scenarios, whilst also nurturing FIWARE as a sustainable and innovation-driven business ecosystem. The FIWARE platform provides a rather simple yet powerful set of APIs (Application Programming Interfaces) that ease the development of Smart Applications in multiple vertical sectors. It includes Core Context Broker components, Core Data Connectors, Context Processing, Analysis and Visualization, IoT agent interfaces and more.
 
-```
-If the software requires 3rd-party dependencies make a list of it.   
-May be useful to include external links to the code and help info.
-```
+## Orion
 
-Example: 
+The Orion Context Broker currently provides the FIWARE NGSI v2 API which is a simple yet powerful Restful API enabling to perform updates, queries, or subscribe to changes on context information. The context broker (Orion-LD) is responsible for managing the lifecycle of context information: entities and their attributes. Using the APIs provided by the context broker it allows to create context elements, manage them through updates, update their attributes, perform queries to retrieve their status, and subscribe to context changes.
 
-- [Boost 1.67.0](https://www.boost.org/users/history/version_1_67_0.html)   
-- [CMake 3.2](https://cmake.org/download)
+A Context Broker component is the core and mandatory component of any “Powered by FIWARE” platform or solution. It enables to manage context information in a highly decentralized and large-scale manner.
 
-```
-Moreover, you can include the list of requirements and how to create
- a virtual environment if needed.
-```
-Example:
+# Proxy
 
-To install the requirements, it is recommended to use a virtual environment. Otherwise, you can use your local
-environment.
+NGINX is open-source web server software used for reverse proxy, load balancing, and caching. It provides HTTPS server capabilities and is mainly designed for maximum performance and stability. It also functions as a proxy server for email communications protocols, such as IMAP, POP3, and SMTP. In this build its used a reverse proxy to provide HTTPS with the help of Certbot.
 
-```sh
-$ python -m venv venv
-$ ... # activate the venv
-$ python -m pip install -r requirements.txt
-``` 
+# Configuration
+Change in files cs3.rtm.aquaspice.eurecatprojects.com.conf, grafana.conf, all the data-qa/config files, and .env the {domain_name} value for the selected domain of the platform.
+
+Also, make all the D3.5 guide changes so that all the components are correctly configured.
+
+**BEWARE**, this build uses the antwerp example, so it doesn't use rtm as a prefix; it uses antwerp. All the commands and container references containing rtm, for example, (docker-compose up -d rtm-timescale) are instead (docker-compose up -d antwerp-timescale). 
+
+# Volumes
+In the .env file, there are two types of volumes: data volumes, which are by default configured at media/aqua/... and can be modified anywhere the admin wants to store the data, and the config volumes, which are mapped at ./confs/... and point to specific configuration. If these need to be changed, please move the corresponding configuration files as well; otherwise, the containers won't fetch the configuration correctly.
 
 ## Usage
-
-Provide descriptions of how to make this project work.  
-Including command line instructions to compile, run the code and access to usage information.
-
-Some simple lines could be of great helpful:
-
-**Example 1:**
-
+Build the images:
 ```
-$ mkdir build && cd build && cmake .. && make    
-$ ./my_exe --help
+docker-compose build
 ```
-
-**Example 2:**
-
-
-You can check the arguments of the program by executing `python main.py -h`. The first argument refers to the path of
-the markov chain, the second and the third corresponds to the initial and final stat respectively. The last argument is
-the number of transitions. It must be an integer.
-
-```sh
-$ python main.py <markov file> <initial state index> <final state index> <days>
+Run the containers:
 ```
-
-An example can be:
-
-```shell
-$ python main.py chains/chain1.txt  1 0 3
-> The probability of starting at Run and ending at Sleep in 3 days is 0.137
+docker-compose up
 ```
-
-## Tests
-
-The tests are done using `unittest`. To run all the tests you can do:
-
-```shell
-python -m unittest discover
+Run the nginx proxy:
 ```
+docker compose -f .\docker-compose-proxy.yml  up -d
+```
+# Dependencies
+Ports 80 and 443 open in the machine and network.
 
-
-**Consider to break this section down for widespread descriptions by including new sections `#` or subsections `##`.**
-
+Docker engine and compose installed in the machine
+https://docs.docker.com/engine/
+https://docs.docker.com/compose/
 
 # Contributors
-
-If you are interested in contributing, please look at the [Contributing](CONTRIBUTING.md) guide.
-
 The current mantainers of the project are:
 
-- [Name of Contributor](https://github.com/username/)
-
-# Publications
-
-Include a list of related publications if needed.   
-Otherwise remove this section.
-
-
-# Changelog
-
-If the project requires versioning, it may be convenient to summarize changes after every release.
-
-
------------------------
+- [Pol Escolà](pol.escola@eurecat.org)
+- [Didac Colominas](didac.colominas@eurecat.org)
+- [Robert Sanfeliu](robert.sanfeliu@eurecat.org)
 
 Copyright 2024 Eurecat

@@ -1,0 +1,44 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "$schemaVersion": "0.0.1",
+    "$id": "url:schema:MeasurementStation",
+    "title": "AquaSpice Models - MeasurementStation Schema",
+    "description": "MeasurementStation information definition",
+    "type": "object",
+    "allOf": [
+        {
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "MeasurementStation"
+                    ],
+                    "description": "Property. NGSI Entity type"
+                },
+                "temperature": {
+                    "type": "Number",
+                    "description": "Property, Temperature of the water, Model:'https://schema.org/Number'"
+                },
+                "depth": {
+                    "type": "Number",
+                    "$ref": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/depth"
+                },
+                "location": {
+                    "$ref": "https://smart-data-models.github.io/data-models/common-schema.json#/definitions/Location-Commons/properties/location"
+                },
+                "conductivity": {
+                    "type": "Number",
+                    "$ref": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/conductivity"
+                }
+            }
+        }
+    ],
+    "required": [
+        "type",
+        "id",
+        "temperature",
+        "depth",
+        "location",
+        "conductivity"
+    ]
+}

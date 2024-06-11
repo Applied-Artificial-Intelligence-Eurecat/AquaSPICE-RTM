@@ -1,0 +1,48 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "$schemaVersion": "0.0.1",
+    "$id": "url:schema:testentity",
+    "title": "AquaSpice Models - testentity",
+    "description": "testentity information definition",
+    "type": "object",
+    "allOf": [
+        {
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "testentity"
+                    ],
+                    "description": "Property. NGSI Entity type"
+                },
+                "dateObserved": {
+                    "$ref": "https://smart-data-models.github.io/data-models/common-schema.json#/definitions/dateObserved"
+                },
+                "temperature": {
+                    "type": "number",
+                    "description": "Property, Temperature of the water, Model:'https://schema.org/Number'"
+                },
+                "depth": {
+                    "type": "number",
+                    "$ref": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/depth"
+                },
+                "location": {
+                    "$ref": "https://smart-data-models.github.io/data-models/common-schema.json#/definitions/Location-Commons/properties/location"
+                },
+                "conductivity": {
+                    "type": "number",
+                    "$ref": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/conductivity"
+                }
+            }
+        }
+    ],
+    "required": [
+        "type",
+        "id",
+        "dateObserved",
+        "temperature",
+        "depth",
+        "location",
+        "conductivity"
+    ]
+}
