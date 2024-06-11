@@ -65,7 +65,7 @@ def query_historical_all_data(urn, offset, limit):
     Get data starting from the beginning
     '''
     return aquaspice_utils.query_quantumleap(
-        f'entities/{urn}?&type=https://cs3.rtm.aquaspice.eurecatprojects.com/schemas/AquaSPICE/MeasurementStation/schema.json&offset={offset}&limit={limit}')
+        f'entities/{urn}?&type=https://{domain_name}/schemas/AquaSPICE/MeasurementStation/schema.json&offset={offset}&limit={limit}')
 
 
 def query_historical_lastN(urn, lastN):
@@ -73,7 +73,7 @@ def query_historical_lastN(urn, lastN):
     Get data (last n data samples)
     '''
     response = aquaspice_utils.query_quantumleap(
-        f'entities/{urn}?lastN={lastN}&type=https://cs3.rtm.aquaspice.eurecatprojects.com/schemas/AquaSPICE/MeasurementStation/schema.json')
+        f'entities/{urn}?lastN={lastN}&type=https://{domain_name}/schemas/AquaSPICE/MeasurementStation/schema.json')
 
     if response.ok == False:
         print(f"---X Failed to get historical data for {urn}: {response.reason}")

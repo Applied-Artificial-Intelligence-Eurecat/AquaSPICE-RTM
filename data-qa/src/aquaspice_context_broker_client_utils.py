@@ -201,7 +201,7 @@ def query_historical_all_data(urn, offset, limit):
     '''
 
     response = query_quantumleap(
-        f'entities/{urn}?&type=https://cs3.rtm.aquaspice.eurecatprojects.com/schemas/AquaSPICE/MeasurementStation/schema.json&offset={offset}&limit={limit}')
+        f'entities/{urn}?&type=https://{domain_name}/schemas/AquaSPICE/MeasurementStation/schema.json&offset={offset}&limit={limit}')
 
     if response.ok == False:
         print(f"---X Failed to get historical data for {urn}: {response.reason}", flush = True)

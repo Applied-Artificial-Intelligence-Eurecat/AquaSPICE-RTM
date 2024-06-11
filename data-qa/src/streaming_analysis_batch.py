@@ -433,7 +433,7 @@ def _produce_corrected_reading(id, entityType, reading, corrected_variables, ana
     aux_func.logMessage(f"{reason_watercps}")
 
     # 12/03/24: Added correction for some errors
-    if str(entityType) == "https://cs3.rtm.aquaspice.eurecatprojects.com/schemas/AquaSPICE/MeasurementStation/schema.json":
+    if str(entityType) == "https://{domain_name}/schemas/AquaSPICE/MeasurementStation/schema.json":
         entityType = "MeasurementStation"
 
     if (str(entityType) == "measurementStation") or (str(entityType) == "measurementstation"):

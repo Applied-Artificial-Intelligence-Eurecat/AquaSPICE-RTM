@@ -23,7 +23,7 @@ A Context Broker component is the core and mandatory component of any “Powered
 NGINX is open-source web server software used for reverse proxy, load balancing, and caching. It provides HTTPS server capabilities and is mainly designed for maximum performance and stability. It also functions as a proxy server for email communications protocols, such as IMAP, POP3, and SMTP. In this build its used a reverse proxy to provide HTTPS with the help of Certbot.
 
 # Configuration
-Change in files cs3.rtm.aquaspice.eurecatprojects.com.conf, grafana.conf, all the data-qa/config files, and .env the {domain_name} value for the selected domain of the platform.
+Change in files rtm.conf, grafana.conf, all the data-qa/config and src files, and .env the {domain_name} value for the selected domain of the platform.
 
 Also, make all the D3.5 guide changes so that all the components are correctly configured.
 
